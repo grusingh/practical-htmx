@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Product List
+{% endblock %}
+
+{% block content %}
+    <h1 class="text-3xl font-bold mb-4">Product Listing</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for product in products %}
+            {% if product.id == edit_product_id %}
+                {% include 'product_edit.html' %}
+            {% else %}
+                {% include 'product_view.html' %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

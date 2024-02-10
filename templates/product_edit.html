@@ -1,0 +1,49 @@
+<div class="product-card bg-white p-4 rounded shadow">
+    <h2 class="text-xl font-bold mb-2">{{ product.name }}</h2>
+    <form method="POST" action="/products/{{ product.id }}">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                Name
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="name" type="text" placeholder="Product Name" value="{{ product.name }}">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                Description
+            </label>
+            <textarea
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="description" placeholder="Product Description">{{ product.description }}</textarea>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="price">
+                Price
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="price" type="number" placeholder="Product Price" value="{{ product.price }}">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="stock">
+                Stock
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="stock" type="number" placeholder="Product Stock" value="{{ product.stock }}">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="archived">
+                Archived
+            </label>
+            <input id="archived" type="checkbox" {% if product.archived %}checked{% endif %}>
+        </div>
+        <div class="flex items-center justify-between">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
+                Save
+            </button>
+            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+               href="/products/">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
