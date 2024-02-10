@@ -1,0 +1,61 @@
+<div class="product-card bg-white p-4 rounded shadow mb-4">
+    <h2 class="text-xl font-bold mb-2">Create New Product</h2>
+    <form method="POST" action="/products/create">
+        <div class="flex justify-between">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                    Name
+                </label>
+                <input class="{{ 'border-red-500' if errors.name else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="name" name="name" type="text" placeholder="Product Name"
+                       value="{{ values.name|default('') }}">
+                {% if errors.name %}
+                    <p class="text-red-500 text-xs italic">{{ errors.name }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="price">
+                    Price
+                </label>
+                <input class="{{ 'border-red-500' if errors.price else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="price" name="price" type="number" placeholder="Product Price"
+                       value="{{ values.price|default('') }}">
+                {% if errors.price %}
+                    <p class="text-red-500 text-xs italic">{{ errors.price }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="stock">
+                    Stock
+                </label>
+                <input class="{{ 'border-red-500' if errors.stock else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="stock" name="stock" type="number" placeholder="Product Stock"
+                       value="{{ values.stock|default('') }}">
+                {% if errors.stock %}
+                    <p class="text-red-500 text-xs italic">{{ errors.stock }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                Description
+            </label>
+            <textarea
+                    class="{{ 'border-red-500' if errors.description else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="description" name="description"
+                    placeholder="Product Description">{{ values.description|default('') }}</textarea>
+            {% if errors.description %}
+                <p class="text-red-500 text-xs italic">{{ errors.description }}</p>
+            {% endif %}
+        </div>
+        <div class="flex items-center justify-between">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
+                Create
+            </button>
+            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+               href="/">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>

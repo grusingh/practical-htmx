@@ -1,4 +1,6 @@
-from flask import Flask, request, render_template, jsonify
+from datetime import datetime
+
+from flask import Flask, request, render_template, redirect, abort
 from flask.views import MethodView
 
 app = Flask(__name__)
@@ -38,40 +40,81 @@ products = [
 ]
 
 
+def validate_product(form_data):
+    errors = {}
+    required_fields = ['name', 'description', 'price', 'stock']
+    for field in required_fields:
+        if field not in form_data:
+            errors[field] = f"{field} is required"
+        elif field == 'name' or field == 'description':
+            if len(form_data[field]) < 3:
+                errors[field] = f"{field} must be at least 3 characters long"
+        elif field == 'price' or field == 'stock':
+            try:
+                float(form_data[field])
+            except ValueError:
+                errors[field] = f"{field} must be a number"
+    return errors
+
+
 @app.route('/', methods=['GET'])
 def get_products():
-    return render_template('index.html', products=products, edit_product_id=None)
+    return render_template('index.html', products=products, edit_product_id=None, values=None, errors=None)
 
 
-@app.route('/products/', methods=['POST'])
+@app.route('/products/create', methods=['POST'])
 def post_product():
-    new_product = request.json
-    new_product['id'] = len(products) + 1
-    products.append(new_product)
-    return jsonify(new_product), 201
+    form_data = request.form.to_dict()
+    errors = validate_product(form_data)
+
+    if errors:
+        return render_template('index.html', products=products, edit_product_id=None, values=form_data,
+                               errors=errors), 400
+
+    form_data['updated_at'] = datetime.utcnow().date().strftime("%Y-%m-%d")
+    products.append(form_data)
+    return redirect('/')
 
 
-@app.route('/products/<int:product_id>', methods=['PUT'])
+@app.route('/products/<int:product_id>/put', methods=['POST'])
 def put_product(product_id):
     for product in products:
         if product['id'] == product_id:
-            product.update(request.json)
-            return jsonify(product), 200
-    return jsonify({"error": "Product not found"}), 404
+            form_data = request.form.to_dict()
+            errors = validate_product(form_data)
+
+            if errors:
+                return render_template('index.html', products=products, edit_product_id=product_id, values=form_data,
+                                       errors=errors), 400
+
+            form_data['updated_at'] = datetime.utcnow().date().strftime("%Y-%m-%d")
+            product.update(form_data)
+            return redirect('/')
+    abort(404)
 
 
-@app.route('/products/<int:product_id>', methods=['DELETE'])
+@app.route('/products/<int:product_id>/patch', methods=['POST'])
+def archive_product(product_id):
+    for product in products:
+        if product['id'] == product_id:
+            product['archived'] = request.form.get('archived').lower() == 'true'
+            product['updated_at'] = datetime.utcnow().date().strftime("%Y-%m-%d")
+            return redirect('/')
+    abort(404)
+
+
+@app.route('/products/<int:product_id>/delete', methods=['POST'])
 def delete_product(product_id):
     for product in products:
         if product['id'] == product_id:
             products.remove(product)
-            return jsonify({"success": True}), 200
-    return jsonify({"error": "Product not found"}), 404
+            return redirect('/')
+    abort(404)
 
 
-@app.route('/product/<int:product_id>/edit', methods=['GET'])
+@app.route('/products/<int:product_id>/edit', methods=['GET'])
 def edit_product(product_id):
-    return render_template('index.html', products=products, edit_product_id=product_id)
+    return render_template('index.html', products=products, edit_product_id=product_id, values=None, errors=None)
 
 
 if __name__ == '__main__':

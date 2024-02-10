@@ -6,7 +6,10 @@
 
 {% block content %}
     <h1 class="text-3xl font-bold mb-4">Product Listing</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    {% include 'product_create.html' %}
+
+    <div class="grid grid-cols-1 gap-4">
         {% for product in products %}
             {% if product.id == edit_product_id %}
                 {% include 'product_edit.html' %}

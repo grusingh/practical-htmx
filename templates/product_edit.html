@@ -1,47 +1,58 @@
 <div class="product-card bg-white p-4 rounded shadow">
     <h2 class="text-xl font-bold mb-2">{{ product.name }}</h2>
-    <form method="POST" action="/products/{{ product.id }}">
+    <form method="POST" action="/products/{{ product.id }}/put">
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
                 Name
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="name" type="text" placeholder="Product Name" value="{{ product.name }}">
+            <input class="{{ 'border-red-500' if errors.name else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="name" name="name" type="text" placeholder="Product Name" value="{{ values.name|default(product.name) }}">
+            {% if errors.name %}
+                <p class="text-red-500 text-xs italic">{{ errors.name }}</p>
+            {% endif %}
         </div>
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
                 Description
             </label>
-            <textarea
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="description" placeholder="Product Description">{{ product.description }}</textarea>
+            <textarea class="{{ 'border-red-500' if errors.description else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="description" name="description" placeholder="Product Description">{{ values.description|default(product.description) }}</textarea>
+            {% if errors.description %}
+                <p class="text-red-500 text-xs italic">{{ errors.description }}</p>
+            {% endif %}
         </div>
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="price">
                 Price
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="price" type="number" placeholder="Product Price" value="{{ product.price }}">
+            <input class="{{ 'border-red-500' if errors.price else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="price" name="price" type="number" placeholder="Product Price" value="{{ values.price|default(product.price) }}">
+            {% if errors.price %}
+                <p class="text-red-500 text-xs italic">{{ errors.price }}</p>
+            {% endif %}
         </div>
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="stock">
                 Stock
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="stock" type="number" placeholder="Product Stock" value="{{ product.stock }}">
+            <input class="{{ 'border-red-500' if errors.stock else 'border-gray-200' }} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="stock" name="stock" type="number" placeholder="Product Stock" value="{{ values.stock|default(product.stock) }}">
+            {% if errors.stock %}
+                <p class="text-red-500 text-xs italic">{{ errors.stock }}</p>
+            {% endif %}
         </div>
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="archived">
                 Archived
             </label>
-            <input id="archived" type="checkbox" {% if product.archived %}checked{% endif %}>
+            <input id="archived" name="archived" type="checkbox" {% if values.archived|default(product.archived) %}checked{% endif %}>
         </div>
         <div class="flex items-center justify-between">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
                 Save
             </button>
             <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-               href="/products/">
+               href="/">
                 Cancel
             </a>
         </div>

@@ -1,4 +1,4 @@
-<div class="product-card bg-white p-4 rounded shadow">
+<div class="product-card {{ 'bg-gray-400' if product.archived else 'bg-white' }} p-4 rounded shadow">
     <h2 class="text-xl font-bold mb-2">{{ product.name }}</h2>
     <p class="mb-2">{{ product.description }}</p>
     <p class="mb-2">Price: {{ product.price }}</p>
@@ -7,16 +7,21 @@
     <p>Last Updated: {{ product.updated_at }}</p>
 
     <div class="flex gap-2 mt-4">
-        <form action="/product/{{ product.id }}/edit" method="get">
+        <form action="/products/{{ product.id }}/edit" method="get">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Edit
             </button>
         </form>
-        <button class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-            Archive
-        </button>
-        <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-            Delete
-        </button>
+        <form action="/products/{{ product.id }}/patch" method="post">
+            <input type="hidden" name="archived" value="{{ not product.archived }}">
+            <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                {% if product.archived %} Unarchive {% else %} Archive {% endif %}
+            </button>
+        </form>
+        <form action="/products/{{ product.id }}/delete" method="post">
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Delete
+            </button>
+        </form>
     </div>
 </div>
