@@ -1,7 +1,7 @@
 from datetime import datetime
-
-from flask import Flask, request, render_template, redirect, abort
-from flask.views import MethodView
+from flask import Flask, request, render_template, redirect, abort, send_file
+import matplotlib.pyplot as plt
+import io
 
 app = Flask(__name__)
 
@@ -57,9 +57,14 @@ def validate_product(form_data):
     return errors
 
 
+def get_total_stock():
+    return sum(product['stock'] for product in products)
+
+
 @app.route('/', methods=['GET'])
 def get_products():
-    return render_template('index.html', products=products, edit_product_id=None, values=None, errors=None)
+    return render_template('index.html', products=products, edit_product_id=None, values=None, errors=None,
+                           total_stock=get_total_stock())
 
 
 @app.route('/products/create', methods=['POST'])
@@ -69,7 +74,7 @@ def post_product():
 
     if errors:
         return render_template('index.html', products=products, edit_product_id=None, values=form_data,
-                               errors=errors), 400
+                               errors=errors, total_stock=get_total_stock()), 400
 
     form_data['updated_at'] = datetime.utcnow().date().strftime("%Y-%m-%d")
     products.append(form_data)
@@ -85,7 +90,7 @@ def put_product(product_id):
 
             if errors:
                 return render_template('index.html', products=products, edit_product_id=product_id, values=form_data,
-                                       errors=errors), 400
+                                       errors=errors, total_stock=get_total_stock()), 400
 
             form_data['updated_at'] = datetime.utcnow().date().strftime("%Y-%m-%d")
             product.update(form_data)
@@ -114,7 +119,41 @@ def delete_product(product_id):
 
 @app.route('/products/<int:product_id>/edit', methods=['GET'])
 def edit_product(product_id):
-    return render_template('index.html', products=products, edit_product_id=product_id, values=None, errors=None)
+    return render_template('index.html', products=products, edit_product_id=product_id, values=None, errors=None,
+                           total_stock=get_total_stock())
+
+
+@app.route('/products/stock_chart', methods=['GET'])
+def stock_chart():
+    # Create a new figure and an axis
+    fig, ax = plt.subplots()
+
+    # Get the product names and their stocks
+    product_names = [product['name'] for product in products]
+    product_stocks = [product['stock'] for product in products]
+
+    # Plot the product stocks
+    ax.bar(product_names, product_stocks)
+    ax.set_xlabel('Product')
+    ax.set_ylabel('Stock')
+    ax.set_title('Product Stock Chart')
+
+    # Save the figure to a BytesIO object
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+
+    # Return the BytesIO object as an image file
+    return send_file(img, mimetype='image/png')
+
+
+@app.route('/products/total_stock', methods=['GET'])
+def total_stock():
+    # Calculate the total stock
+    total = sum(product['stock'] for product in products)
+
+    # Return the total stock as a string
+    return str(total)
 
 
 if __name__ == '__main__':
