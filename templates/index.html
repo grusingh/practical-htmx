@@ -9,7 +9,10 @@
 
     <div class="flex justify-between">
         <div class="text-3xl font-bold mb-4 text-green-800">
-            Total Stock: {{ total_stock }}
+            Total Stock: <span id="total-stock">{{ total_stock }}</span>
+            <button id="btn-show-total-stock">
+                🔄
+            </button>
         </div>
         <a href="/products/stock_chart"
            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">
@@ -30,4 +33,16 @@
             {% endif %}
         {% endfor %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('btn-show-total-stock').addEventListener('click', function () {
+                fetch('/products/total_stock_json')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('total-stock').innerText = data.total_stock;
+                    });
+            });
+        });
+    </script>
 {% endblock %}

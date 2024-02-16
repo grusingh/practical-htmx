@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, abort, send_file
+from flask import Flask, request, render_template, redirect, abort, send_file, jsonify
 import matplotlib.pyplot as plt
 import io
 
@@ -64,7 +64,7 @@ def get_total_stock():
 @app.route('/', methods=['GET'])
 def get_products():
     return render_template('index.html', products=products, edit_product_id=None, values=None, errors=None,
-                           total_stock=get_total_stock())
+                           total_stock="-")
 
 
 @app.route('/products/create', methods=['POST'])
@@ -154,6 +154,15 @@ def total_stock():
 
     # Return the total stock as a string
     return str(total)
+
+
+@app.route('/products/total_stock_json', methods=['GET'])
+def total_stock_json():
+    # Calculate the total stock
+    total = sum(product['stock'] for product in products)
+    data = {"total_stock": total}
+
+    return jsonify(data)
 
 
 if __name__ == '__main__':
